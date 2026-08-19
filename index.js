@@ -9,7 +9,8 @@ const app = new App({
   socketMode: true
 });
 
-app.command("/mee7-ping", async ({ ack, respond }) => {
+
+app.command("/mee7-ping", async ({ command, ack, respond }) => {
   const start = Date.now();
 
   await ack();
@@ -21,6 +22,7 @@ app.command("/mee7-ping", async ({ ack, respond }) => {
   });
 });
 
+
 app.command("/mee7-catfact", async ({ ack, respond }) => {
   await ack();
 
@@ -31,13 +33,14 @@ app.command("/mee7-catfact", async ({ ack, respond }) => {
       text: `Cat Fact:\n${response.data.fact}`
     });
   } catch (err) {
-    console.error("Cat fact error:", err);
+    console.error(err);
 
     await respond({
       text: "Failed to fetch a cat fact."
     });
   }
 });
+
 
 app.command("/mee7-dog", async ({ ack, respond }) => {
   await ack();
@@ -51,13 +54,14 @@ app.command("/mee7-dog", async ({ ack, respond }) => {
       text: `🐶 ${response.data.message}`
     });
   } catch (err) {
-    console.error("Dog API error:", err);
+    console.error(err);
 
     await respond({
       text: "Failed to fetch a dog."
     });
   }
 });
+
 
 app.command("/mee7-joke", async ({ ack, respond }) => {
   await ack();
@@ -79,13 +83,14 @@ app.command("/mee7-joke", async ({ ack, respond }) => {
       });
     }
   } catch (err) {
-    console.error("Joke API error:", err);
+    console.error(err);
 
     await respond({
       text: "Failed to fetch a joke."
     });
   }
 });
+
 
 app.command("/mee7-fact", async ({ ack, respond }) => {
   await ack();
@@ -99,7 +104,7 @@ app.command("/mee7-fact", async ({ ack, respond }) => {
       text: `Useless Fact:\n${response.data.text}`
     });
   } catch (err) {
-    console.error("Fact API error:", err);
+    console.error(err);
 
     await respond({
       text: "Failed to fetch a useless fact."
@@ -107,19 +112,18 @@ app.command("/mee7-fact", async ({ ack, respond }) => {
   }
 });
 
+
 app.command("/mee7-quote", async ({ ack, respond }) => {
   await ack();
 
   try {
-    const response = await axios.get(
-      "https://dummyjson.com/quotes/random"
-    );
+    const response = await axios.get("https://dummyjson.com/quotes/random");
 
     await respond({
       text: `"${response.data.quote}"\n— ${response.data.author}`
     });
   } catch (err) {
-    console.error("Quote API error:", err);
+    console.error(err);
 
     await respond({
       text: "Failed to fetch a quote."
@@ -127,11 +131,13 @@ app.command("/mee7-quote", async ({ ack, respond }) => {
   }
 });
 
+
 app.command("/mee7-help", async ({ ack, respond }) => {
   await ack();
 
   await respond({
-    text: `Available Commands:
+    text:
+`Available Commands:
 
 /mee7-ping - Check bot latency
 /mee7-catfact - Get a random cat fact
@@ -144,11 +150,7 @@ app.command("/mee7-help", async ({ ack, respond }) => {
 });
 
 (async () => {
-  try {
-    await app.start();
+  await app.start();
 
-    console.log("Bot is running!");
-  } catch (error) {
-    console.error("Failed to start bot:", error);
-  }
+  console.log("bot is running!");
 })();
