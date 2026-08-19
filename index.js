@@ -10,6 +10,7 @@ const app = new App({
 });
 
 
+// /mee7-ping
 app.command("/mee7-ping", async ({ command, ack, respond }) => {
   const start = Date.now();
 
@@ -23,6 +24,7 @@ app.command("/mee7-ping", async ({ command, ack, respond }) => {
 });
 
 
+// /mee7-catfact
 app.command("/mee7-catfact", async ({ ack, respond }) => {
   await ack();
 
@@ -42,6 +44,7 @@ app.command("/mee7-catfact", async ({ ack, respond }) => {
 });
 
 
+// /mee7-dog
 app.command("/mee7-dog", async ({ ack, respond }) => {
   await ack();
 
@@ -63,56 +66,114 @@ app.command("/mee7-dog", async ({ ack, respond }) => {
 });
 
 
+// /mee7-joke
 app.command("/mee7-joke", async ({ ack, respond }) => {
   await ack();
 
-  try {
-    const response = await axios.get(
-      "https://v2.jokeapi.dev/joke/Any?safe-mode&blacklistFlags=nsfw,racist,sexist,explicit"
-    );
+  const maxAttempts = 5;
 
-    const joke = response.data;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await axios.get(
+        "https://v2.jokeapi.dev/joke/Any?safe-mode&blacklistFlags=nsfw,racist,sexist,explicit,political"
+      );
 
-    if (joke.type === "single") {
+      const joke = response.data;
+
+      if (joke.error) {
+        throw new Error("Joke API returned an error.");
+      }
+
+      if (joke.type === "single") {
+        await respond({
+          text: `😂 ${joke.joke}`
+        });
+      } else {
+        await respond({
+          text: `😂 ${joke.setup}\n\n${joke.delivery}`
+        });
+      }
+
+      return;
+    } catch (err) {
+      console.error(`Joke attempt ${attempt}/${maxAttempts} failed:`, err);
+
+      if (attempt < maxAttempts) {
+        continue;
+      }
+
       await respond({
-        text: `😂 ${joke.joke}`
-      });
-    } else {
-      await respond({
-        text: `😂 ${joke.setup}\n\n${joke.delivery}`
+        text: "Failed to fetch a safe joke."
       });
     }
-  } catch (err) {
-    console.error(err);
-
-    await respond({
-      text: "Failed to fetch a joke."
-    });
   }
 });
 
 
+// /mee7-fact
 app.command("/mee7-fact", async ({ ack, respond }) => {
   await ack();
 
-  try {
-    const response = await axios.get(
-      "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en"
-    );
+  const maxAttempts = 5;
 
-    await respond({
-      text: `Useless Fact:\n${response.data.text}`
-    });
-  } catch (err) {
-    console.error(err);
+  const blockedWords = [
+    "sex",
+    "sexual",
+    "porn",
+    "pornography",
+    "nude",
+    "nudity",
+    "nsfw",
+    "rape",
+    "racist",
+    "racism",
+    "suicide",
+    "murder"
+  ];
 
-    await respond({
-      text: "Failed to fetch a useless fact."
-    });
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await axios.get(
+        "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en"
+      );
+
+      const fact = response.data.text;
+      const lowerFact = fact.toLowerCase();
+
+      const isUnsafe = blockedWords.some(word =>
+        lowerFact.includes(word)
+      );
+
+      if (isUnsafe) {
+        console.log(
+          `Unsafe fact received on attempt ${attempt}/${maxAttempts}, retrying...`
+        );
+
+        continue;
+      }
+
+      await respond({
+        text: `Useless Fact:\n${fact}`
+      });
+
+      return;
+    } catch (err) {
+      console.error(
+        `Fact attempt ${attempt}/${maxAttempts} failed:`,
+        err
+      );
+
+      if (attempt === maxAttempts) {
+        await respond({
+          text: "Failed to fetch a safe useless fact."
+        });
+      }
+    }
   }
 });
 
 
+// /mee7-quote
 app.command("/mee7-quote", async ({ ack, respond }) => {
   await ack();
 
@@ -132,6 +193,7 @@ app.command("/mee7-quote", async ({ ack, respond }) => {
 });
 
 
+// /mee7-help
 app.command("/mee7-help", async ({ ack, respond }) => {
   await ack();
 
@@ -148,6 +210,7 @@ app.command("/mee7-help", async ({ ack, respond }) => {
 /mee7-help - Show this help message`
   });
 });
+
 
 (async () => {
   await app.start();
