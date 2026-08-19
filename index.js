@@ -10,7 +10,6 @@ const app = new App({
 });
 
 
-// /mee7-ping
 app.command("/mee7-ping", async ({ command, ack, respond }) => {
   const start = Date.now();
 
@@ -24,7 +23,7 @@ app.command("/mee7-ping", async ({ command, ack, respond }) => {
 });
 
 
-// /mee7-catfact
+
 app.command("/mee7-catfact", async ({ ack, respond }) => {
   await ack();
 
@@ -44,7 +43,6 @@ app.command("/mee7-catfact", async ({ ack, respond }) => {
 });
 
 
-// /mee7-dog
 app.command("/mee7-dog", async ({ ack, respond }) => {
   await ack();
 
@@ -66,7 +64,7 @@ app.command("/mee7-dog", async ({ ack, respond }) => {
 });
 
 
-// /mee7-joke
+
 app.command("/mee7-joke", async ({ ack, respond }) => {
   await ack();
 
@@ -110,7 +108,7 @@ app.command("/mee7-joke", async ({ ack, respond }) => {
 });
 
 
-// /mee7-fact
+
 app.command("/mee7-fact", async ({ ack, respond }) => {
   await ack();
 
@@ -173,7 +171,7 @@ app.command("/mee7-fact", async ({ ack, respond }) => {
 });
 
 
-// /mee7-quote
+
 app.command("/mee7-quote", async ({ ack, respond }) => {
   await ack();
 
@@ -193,7 +191,7 @@ app.command("/mee7-quote", async ({ ack, respond }) => {
 });
 
 
-// /mee7-help
+
 app.command("/mee7-help", async ({ ack, respond }) => {
   await ack();
 
